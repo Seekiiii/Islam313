@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نور القرآن — Quran, Namaz &amp; Duain</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0B2B26">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  @font-face{
+    font-family:'Uthman Taha Naskh';
+    font-weight:400;
+    src:url('https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@f93bf5f3/various-woff2/UthmanTN1%20Ver10.woff2') format('woff2');
+  }
+  @font-face{
+    font-family:'Uthman Taha Naskh';
+    font-weight:700;
+    src:url('https://cdn.jsdelivr.net/gh/mustafa0x/qpc-fonts@f93bf5f3/various-woff2/UthmanTN1B%20Ver10.woff2') format('woff2');
+  }
+</style>
+<style>
+  :root{
+    --emerald-950:#0B2B26;
+    --emerald-900:#0E3630;
+    --emerald-700:#1F6F5C;
+    --emerald-600:#2C8571;
+    --gold-500:#C79A3B;
+    --gold-300:#E4C878;
+    --parchment:#FBF6EC;
+    --parchment-2:#F3EBDA;
+    --ink:#1C2321;
+    --ink-soft:#4B5751;
+    --line:#DED2B4;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--parchment);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .app{
+    max-width:820px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--parchment);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* ---------- Header ---------- */
+  header.top{
+    background:linear-gradient(160deg,var(--emerald-950),var(--emerald-900) 70%);
+    color:var(--parchment);
+    padding:28px 24px 20px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.top::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(199,154,59,0.10) 0, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(199,154,59,0.10) 0, transparent 40%);
+    pointer-events:none;
+  }
+  .title-row{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    position:relative;
+  }
+  .app-title-ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-weight:700;
+    font-size:30px;
+    color:var(--gold-300);
+    line-height:1;
+  }
+  .app-title-en{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:15px;
+    color:rgba(251,246,236,0.75);
+    letter-spacing:0.02em;
+  }
+  .date-strip{
+    margin-top:14px;
+    font-size:12.5px;
+    color:rgba(251,246,236,0.65);
+    position:relative;
+  }
+
+  /* ---------- Bottom Nav ---------- */
+  nav.tabs{
+    display:flex;
+    background:var(--emerald-900);
+    position:fixed;
+    bottom:0;
+    left:0;right:0;
+    max-width:820px;
+    margin:0 auto;
+    z-index:20;
+    border-top:1px solid rgba(251,246,236,0.08);
+    box-shadow:0 -4px 16px rgba(0,0,0,0.15);
+  }
+  nav.tabs button{
+    flex:1;
+    background:none;
+    border:none;
+    color:rgba(251,246,236,0.55);
+    font-family:'Inter',sans-serif;
+    font-size:10.5px;
+    font-weight:600;
+    padding:9px 4px 8px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    transition:color .2s ease;
+  }
+  nav.tabs button .icon{
+    font-size:19px;
+    line-height:1;
+  }
+  nav.tabs button .ur{
+    display:block;
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-size:13px;
+    font-weight:700;
+  }
+  nav.tabs button.active{
+    color:var(--gold-300);
+  }
+
+  main{
+    flex:1;
+    padding:20px 20px 84px;
+  }
+  section.view{display:none;}
+  section.view.active{display:block;}
+
+  /* ---------- Shared bits ---------- */
+  .section-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+  }
+  .section-head h2{
+    font-family:'Cormorant Garamond', serif;
+    font-size:24px;
+    font-weight:600;
+    margin:0;
+    color:var(--emerald-950);
+  }
+  .section-head .ur-h{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-weight:700;
+    font-size:21px;
+    color:var(--emerald-700);
+  }
+  .hint{
+    font-size:12.5px;
+    color:var(--ink-soft);
+    margin:0 0 18px;
+    line-height:1.5;
+  }
+  .loading{
+    text-align:center;
+    padding:40px 10px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+  .error-box{
+    background:#FBEAEA;
+    border:1px solid #E3B8B8;
+    color:#7A2B2B;
+    padding:14px 16px;
+    border-radius:6px;
+    font-size:13px;
+    line-height:1.6;
+  }
+
+  /* ---------- Quran: surah grid ---------- */
+  .surah-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .surah-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:12px 14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    transition:border-color .15s ease, transform .1s ease;
+  }
+  .surah-card:hover{border-color:var(--gold-500);}
+  .surah-card:active{transform:scale(0.98);}
+  .surah-num{
+    width:30px;height:30px;
+    border-radius:50%;
+    border:1px solid var(--gold-500);
+    color:var(--emerald-700);
+    font-size:12px;
+    font-weight:600;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .surah-meta{min-width:0;}
+  .surah-en{
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--ink);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .surah-sub{
+    font-size:11px;
+    color:var(--ink-soft);
+    margin-top:2px;
+  }
+  .surah-ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-weight:600;
+    font-size:20px;
+    color:var(--emerald-950);
+    margin-left:auto;
+  }
+
+  /* ---------- Quran: ayah detail ---------- */
+  .back-btn{
+    background:none;
+    border:none;
+    color:var(--emerald-700);
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    padding:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .audio-bar{
+    display:flex;
+    gap:8px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .audio-bar select{
+    flex:1;
+    min-width:160px;
+    padding:9px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:12.5px;
+    font-family:'Inter',sans-serif;
+    background:#fff;
+    color:var(--ink);
+  }
+  .audio-bar .btn{
+    flex:0 0 auto;
+    padding:9px 16px;
+    font-size:12.5px;
+  }
+  .audio-bar .btn.playing{
+    background:var(--gold-500);
+  }
+  .ayah-play-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:26px;height:26px;
+    border-radius:50%;
+    border:1px solid var(--gold-500);
+    background:#fff;
+    color:var(--emerald-700);
+    font-size:11px;
+    cursor:pointer;
+    margin-inline-start:8px;
+    vertical-align:middle;
+    padding:0;
+  }
+  .ayah-play-btn.playing{
+    background:var(--gold-500);
+    color:#fff;
+  }
+  .ayah.is-playing{
+    background:var(--parchment-2);
+    border-radius:8px;
+    padding-left:10px;
+    padding-right:10px;
+    margin-left:-10px;
+    margin-right:-10px;
+  }
+  .surah-banner{
+    background:linear-gradient(135deg,var(--emerald-900),var(--emerald-700));
+    color:var(--parchment);
+    border-radius:10px;
+    padding:20px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .surah-banner .ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-weight:700;
+    font-size:30px;
+    color:var(--gold-300);
+  }
+  .surah-banner .en{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:14px;
+    margin-top:4px;
+    color:rgba(251,246,236,0.8);
+  }
+  .surah-banner .info{
+    font-size:11px;
+    margin-top:8px;
+    color:rgba(251,246,236,0.6);
+    letter-spacing:0.03em;
+  }
+  .ayah{
+    border-bottom:1px solid var(--line);
+    padding:18px 0;
+  }
+  .ayah:first-of-type{padding-top:0;}
+  .ayah-num{
+    display:inline-block;
+    font-size:11px;
+    color:var(--emerald-700);
+    background:var(--parchment-2);
+    border:1px solid var(--gold-500);
+    border-radius:50%;
+    width:24px;height:24px;
+    line-height:22px;
+    text-align:center;
+    margin-bottom:10px;
+  }
+  .ayah-ar{
+    font-family:'Noto Naskh Arabic', serif;
+    font-weight:600;
+    font-size:28px;
+    line-height:2.6;
+    letter-spacing:0.01em;
+    text-align:right;
+    direction:rtl;
+    color:var(--ink);
+    margin-bottom:16px;
+  }
+  .ayah-ur{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-weight:600;
+    font-size:22px;
+    line-height:2.5;
+    text-align:right;
+    direction:rtl;
+    color:var(--emerald-900);
+    margin-bottom:10px;
+  }
+  .ayah-en{
+    font-size:14.5px;
+    line-height:1.8;
+    color:var(--ink-soft);
+    font-style:italic;
+  }
+
+  /* ---------- Namaz tab ---------- */
+  .namaz-form{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:18px;
+    margin-bottom:20px;
+  }
+  .field-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:10px;
+  }
+  .field{flex:1;display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:11.5px;color:var(--ink-soft);font-weight:600;}
+  .field input, .field select{
+    padding:10px 10px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    font-size:14px;
+    font-family:'Inter',sans-serif;
+    background:var(--parchment);
+    color:var(--ink);
+  }
+  .btn-row{display:flex;gap:10px;margin-top:6px;}
+  .btn{
+    flex:1;
+    padding:11px 14px;
+    border-radius:6px;
+    border:none;
+    font-size:13.5px;
+    font-weight:600;
+    cursor:pointer;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-primary{background:var(--emerald-700);color:#fff;}
+  .btn-primary:hover{background:var(--emerald-900);}
+  .btn-ghost{background:none;border:1px solid var(--gold-500);color:var(--emerald-900);}
+  .btn-ghost:hover{background:var(--parchment-2);}
+
+  .timings-card{
+    background:linear-gradient(135deg,var(--emerald-900),var(--emerald-700));
+    border-radius:12px;
+    color:var(--parchment);
+    padding:22px 20px;
+  }
+  .timings-loc{
+    font-size:14px;
+    font-weight:600;
+    margin-bottom:2px;
+  }
+  .timings-date{
+    font-size:11.5px;
+    color:rgba(251,246,236,0.65);
+    margin-bottom:18px;
+  }
+  .timings-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr 1fr;
+    gap:12px;
+  }
+  .timing-item{
+    background:rgba(251,246,236,0.08);
+    border:1px solid rgba(251,246,236,0.15);
+    border-radius:8px;
+    padding:12px 8px;
+    text-align:center;
+  }
+  .timing-item .p-ur{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-size:17px;
+    color:var(--gold-300);
+  }
+  .timing-item .p-en{
+    font-size:10px;
+    color:rgba(251,246,236,0.6);
+    margin-top:1px;
+    letter-spacing:0.03em;
+  }
+  .timing-item .p-time{
+    font-size:16px;
+    font-weight:700;
+    margin-top:6px;
+    font-variant-numeric:tabular-nums;
+  }
+
+  /* ---------- Duas tab ---------- */
+  .dua-card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    margin-bottom:12px;
+    overflow:hidden;
+  }
+  .dua-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    cursor:pointer;
+  }
+  .dua-titles .en{font-size:13.5px;font-weight:600;color:var(--ink);}
+  .dua-titles .ur{font-family:'Noto Nastaliq Urdu', serif;font-weight:700;font-size:18px;color:var(--emerald-700);margin-top:3px;}
+  .dua-chevron{
+    color:var(--gold-500);
+    font-size:14px;
+    transition:transform .2s ease;
+    flex-shrink:0;
+    margin-left:10px;
+  }
+  .dua-card.open .dua-chevron{transform:rotate(180deg);}
+  .dua-body{
+    display:none;
+    padding:0 16px 18px;
+    border-top:1px solid var(--line);
+  }
+  .dua-card.open .dua-body{display:block;padding-top:14px;}
+  .dua-ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-weight:600;
+    font-size:25px;
+    line-height:2.3;
+    text-align:right;
+    direction:rtl;
+    color:var(--ink);
+    margin-bottom:14px;
+  }
+  .dua-translit{
+    font-size:12px;
+    font-style:italic;
+    color:var(--ink-soft);
+    margin-bottom:12px;
+    line-height:1.6;
+  }
+  .dua-ur-tr{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-weight:600;
+    font-size:19px;
+    text-align:right;
+    direction:rtl;
+    color:var(--emerald-900);
+    margin-bottom:12px;
+    line-height:2.3;
+  }
+  .dua-en-tr{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.6;
+  }
+
+  /* ---------- Home tab ---------- */
+  .home-greeting{
+    text-align:center;
+    padding:10px 0 18px;
+  }
+  .home-greeting .hg-ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-size:26px;
+    color:var(--emerald-900);
+  }
+  .home-greeting .hg-sub{
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:4px;
+  }
+  .home-next-prayer{
+    background:linear-gradient(135deg,var(--emerald-900),var(--emerald-700));
+    border-radius:12px;
+    color:var(--parchment);
+    padding:18px;
+    text-align:center;
+    margin-bottom:18px;
+  }
+  .home-next-prayer .hnp-label{
+    font-family:'Noto Nastaliq Urdu', serif;
+    font-size:16px;
+  }
+  .home-next-prayer .hnp-name{
+    font-size:12px;
+    color:rgba(251,246,236,0.7);
+    letter-spacing:0.05em;
+    margin-bottom:4px;
+  }
+  .home-next-prayer .hnp-time{
+    font-size:26px;
+    font-weight:700;
+  }
+  .quick-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+  .quick-tile{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:14px 4px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:3px;
+    cursor:pointer;
+  }
+  .quick-tile .qt-icon{font-size:22px;}
+  .quick-tile .qt-en{font-size:10.5px;font-weight:600;color:var(--ink);}
+  .quick-tile .qt-ur{font-family:'Noto Nastaliq Urdu', serif;font-size:13px;color:var(--emerald-700);}
+  .asma-card{
+    background:linear-gradient(135deg,var(--emerald-700),var(--emerald-950));
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    color:var(--parchment);
+  }
+  .asma-card .asma-ar{
+    font-family:'Uthman Taha Naskh', serif;
+    font-size:30px;
+    color:var(--gold-300);
+    margin-bottom:6px;
+  }
+  .asma-card .asma-en{font-size:14px;font-weight:600;}
+  .asma-card .asma-ur{font-family:'Noto Nastaliq Urdu', serif;font-size:16px;color:rgba(251,246,236,0.85);margin-top:4px;}
+
+  /* ---------- More tab ---------- */
+  .more-list{display:flex;flex-direction:column;gap:10px;}
+  .more-item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:14px;
+  }
+  .more-item.disabled{opacity:0.6;}
+  .mi-icon{font-size:20px;}
+  .mi-text{flex:1;}
+  .mi-en{font-size:13px;font-weight:600;color:var(--ink);}
+  .mi-ur{font-family:'Noto Nastaliq Urdu', serif;font-size:14px;color:var(--emerald-700);}
+  .mi-soon{font-size:10px;color:var(--ink-soft);font-style:italic;}
+
+  footer.foot{
+    text-align:center;
+    font-size:11px;
+    color:var(--ink-soft);
+    padding:18px;
+    border-top:1px solid var(--line);
+  }
+
+  @media (max-width:420px){
+    .surah-grid{grid-template-columns:1fr;}
+    .field-row{flex-direction:column;}
+    .timings-grid{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header class="top">
+    <div class="title-row">
+      <div>
+        <div class="app-title-ar">نور القرآن</div>
+        <div class="app-title-en">Noor-ul-Quran</div>
+      </div>
+    </div>
+    <div class="date-strip" id="gregorianDate"></div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="home"><span class="icon">🏠</span>Home<span class="ur">ہوم</span></button>
+    <button class="tab-btn" data-tab="quran"><span class="icon">📖</span>Quran<span class="ur">قرآن</span></button>
+    <button class="tab-btn" data-tab="namaz"><span class="icon">🕌</span>Namaz<span class="ur">نماز</span></button>
+    <button class="tab-btn" data-tab="duas"><span class="icon">🤲</span>Duas<span class="ur">دعائیں</span></button>
+    <button class="tab-btn" data-tab="more"><span class="icon">⋯</span>More<span class="ur">مزید</span></button>
+  </nav>
+
+  <main>
+
+    <!-- ===================== HOME TAB ===================== -->
+    <section class="view active" id="view-home">
+      <div class="home-greeting">
+        <div class="hg-ar" id="homeGreetingAr">السَّلَامُ عَلَيْكُمْ</div>
+        <div class="hg-sub" id="homeGreetingDate"></div>
+      </div>
+
+      <div class="home-next-prayer" id="homeNextPrayerCard">
+        <div class="hnp-label">اگلی نماز کا وقت جاننے کے لیے لوکیشن سیٹ کریں</div>
+        <button class="btn btn-primary" id="homeSetLocationBtn" style="margin-top:10px;">نماز کے اوقات دیکھیں</button>
+      </div>
+
+      <div class="quick-grid">
+        <button class="quick-tile" data-goto="quran">
+          <span class="qt-icon">📖</span>
+          <span class="qt-en">Quran</span>
+          <span class="qt-ur">قرآن</span>
+        </button>
+        <button class="quick-tile" data-goto="namaz">
+          <span class="qt-icon">🕌</span>
+          <span class="qt-en">Namaz</span>
+          <span class="qt-ur">نماز</span>
+        </button>
+        <button class="quick-tile" data-goto="duas">
+          <span class="qt-icon">🤲</span>
+          <span class="qt-en">Duas</span>
+          <span class="qt-ur">دعائیں</span>
+        </button>
+        <button class="quick-tile" data-goto="more">
+          <span class="qt-icon">⋯</span>
+          <span class="qt-en">More</span>
+          <span class="qt-ur">مزید</span>
+        </button>
+      </div>
+
+      <div class="section-head" style="margin-top:22px;">
+        <h2>Name of Allah — Today</h2>
+        <span class="ur-h">اسمِ الہیٰ</span>
+      </div>
+      <div class="asma-card" id="asmaCard"></div>
+    </section>
+
+    <!-- ===================== QURAN TAB ===================== -->
+    <section class="view" id="view-quran">
+
+      <div id="surahListWrap">
+        <div class="section-head">
+          <h2>Surahs</h2>
+          <span class="ur-h">سورتیں</span>
+        </div>
+        <p class="hint">Kisi bhi surah par tap karein — Arabic text, Urdu aur English tarjuma sath dikhega.</p>
+        <div id="surahGrid" class="loading">سورتیں لوڈ ہو رہی ہیں... Loading surahs…</div>
+      </div>
+
+      <div id="surahDetailWrap" style="display:none;">
+        <button class="back-btn" id="backToSurahs">&#8592; تمام سورتیں (All Surahs)</button>
+        <div class="audio-bar">
+          <select id="reciterSelect">
+            <option value="ar.alafasy">مشاری راشد العفاسی — Mishary Alafasy</option>
+            <option value="ar.abdulbasitmurattal">عبد الباسط — Abdul Basit</option>
+            <option value="ar.husary">محمود خلیل الحصری — Al-Husary</option>
+            <option value="ar.abdurrahmaansudais">عبدالرحمن السدیس — As-Sudais</option>
+          </select>
+          <button class="btn btn-primary" id="playSurahBtn">▶ پوری سورت سنیں</button>
+        </div>
+        <div id="surahBanner"></div>
+        <div id="ayahsList" class="loading">لوڈ ہو رہا ہے...</div>
+      </div>
+
+    </section>
+
+    <!-- ===================== NAMAZ TAB ===================== -->
+    <section class="view" id="view-namaz">
+      <div class="section-head">
+        <h2>Prayer Times</h2>
+        <span class="ur-h">نماز کے اوقات</span>
+      </div>
+      <p class="hint">Duniya ke kisi bhi mulk aur shehar ka naam likhein, ya "میری لوکیشن" button se automatic waqt maloom karein.</p>
+
+      <div class="namaz-form">
+        <div class="field-row">
+          <div class="field">
+            <label>City / شہر</label>
+            <input type="text" id="cityInput" placeholder="e.g. Rawalpindi, Lahore, Karachi, London...">
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Country / ملک</label>
+            <select id="countrySelect">
+              <option value="">— Select Country (or type below) —</option>
+            </select>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Country (agar list mein nahi hai) / Type manually</label>
+            <input type="text" id="countryInputManual" placeholder="e.g. Pakistan, Saudi Arabia, USA...">
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn btn-primary" id="getTimingsBtn">اوقات معلوم کریں (Get Timings)</button>
+          <button class="btn btn-ghost" id="useLocationBtn">📍 میری لوکیشن</button>
+        </div>
+      </div>
+
+      <div id="timingsResult"></div>
+    </section>
+
+    <!-- ===================== DUAS TAB ===================== -->
+    <section class="view" id="view-duas">
+      <div class="section-head">
+        <h2>Daily Duas</h2>
+        <span class="ur-h">روزانہ کی دعائیں</span>
+      </div>
+      <p class="hint">Kisi bhi dua par tap karein — Arabic, talaffuz (transliteration), Urdu aur English tarjuma khulega.</p>
+      <div id="duasList"></div>
+    </section>
+
+    <!-- ===================== MORE TAB ===================== -->
+    <section class="view" id="view-more">
+      <div class="section-head">
+        <h2>More</h2>
+        <span class="ur-h">مزید</span>
+      </div>
+      <div class="more-list">
+        <div class="more-item disabled">
+          <span class="mi-icon">📿</span>
+          <div class="mi-text"><div class="mi-en">Tasbeeh Counter</div><div class="mi-ur">تسبیح کاؤنٹر</div></div>
+          <span class="mi-soon">jald aa raha hai</span>
+        </div>
+        <div class="more-item disabled">
+          <span class="mi-icon">🧭</span>
+          <div class="mi-text"><div class="mi-en">Qibla Direction</div><div class="mi-ur">قبلہ رخ</div></div>
+          <span class="mi-soon">jald aa raha hai</span>
+        </div>
+        <div class="more-item disabled">
+          <span class="mi-icon">📅</span>
+          <div class="mi-text"><div class="mi-en">Hijri Calendar</div><div class="mi-ur">اسلامی کیلنڈر</div></div>
+          <span class="mi-soon">jald aa raha hai</span>
+        </div>
+        <div class="more-item disabled">
+          <span class="mi-icon">💰</span>
+          <div class="mi-text"><div class="mi-en">Zakat Calculator</div><div class="mi-ur">زکوٰۃ کیلکولیٹر</div></div>
+          <span class="mi-soon">jald aa raha hai</span>
+        </div>
+      </div>
+      <p class="hint" style="margin-top:20px;">Yeh features agle updates mein shamil honge.</p>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    Quran text &amp; translations via AlQuran Cloud API &middot; Prayer times via Al-Adhan API
+  </footer>
+</div>
+
+<script>
+/* ============================================================
+   TAB SWITCHING
+   ============================================================ */
+const tabBtns = document.querySelectorAll('.tab-btn');
+const views = {
+  home: document.getElementById('view-home'),
+  quran: document.getElementById('view-quran'),
+  namaz: document.getElementById('view-namaz'),
+  duas: document.getElementById('view-duas'),
+  more: document.getElementById('view-more'),
+};
+function goToTab(tab){
+  tabBtns.forEach(b=> b.classList.toggle('active', b.dataset.tab === tab));
+  Object.entries(views).forEach(([key,v])=> v.classList.toggle('active', key === tab));
+}
+tabBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=> goToTab(btn.dataset.tab));
+});
+document.querySelectorAll('.quick-tile').forEach(btn=>{
+  btn.addEventListener('click', ()=> goToTab(btn.dataset.goto));
+});
+document.getElementById('homeSetLocationBtn').addEventListener('click', ()=> goToTab('namaz'));
+
+/* Gregorian + hijri-ish date strip */
+document.getElementById('gregorianDate').textContent =
+  new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+document.getElementById('homeGreetingDate').textContent =
+  new Date().toLocaleDateString('en-GB', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+/* ============================================================
+   HOME: Asma-ul-Husna (name of the day)
+   ============================================================ */
+const ASMA_UL_HUSNA = [
+  {ar:"الرَّحْمَٰنُ", en:"Ar-Rahman — The Most Compassionate", ur:"نہایت رحم والا"},
+  {ar:"الرَّحِيمُ", en:"Ar-Raheem — The Most Merciful", ur:"نہایت مہربان"},
+  {ar:"الْمَلِكُ", en:"Al-Malik — The King", ur:"بادشاہ"},
+  {ar:"الْقُدُّوسُ", en:"Al-Quddus — The Most Sacred", ur:"نہایت پاک"},
+  {ar:"السَّلَامُ", en:"As-Salam — The Source of Peace", ur:"سلامتی والا"},
+  {ar:"الْمُؤْمِنُ", en:"Al-Mu'min — The Inspirer of Faith", ur:"امن دینے والا"},
+  {ar:"الْمُهَيْمِنُ", en:"Al-Muhaymin — The Guardian", ur:"نگہبان"},
+  {ar:"الْعَزِيزُ", en:"Al-Aziz — The Victorious", ur:"غالب"},
+  {ar:"الْجَبَّارُ", en:"Al-Jabbar — The Compeller", ur:"زبردست"},
+  {ar:"الْمُتَكَبِّرُ", en:"Al-Mutakabbir — The Greatest", ur:"بڑائی والا"},
+  {ar:"الْخَالِقُ", en:"Al-Khaliq — The Creator", ur:"پیدا کرنے والا"},
+  {ar:"الْبَارِئُ", en:"Al-Bari — The Maker of Order", ur:"بغیر نمونہ پیدا کرنے والا"},
+  {ar:"الْمُصَوِّرُ", en:"Al-Musawwir — The Shaper of Beauty", ur:"صورت بنانے والا"},
+  {ar:"الْغَفَّارُ", en:"Al-Ghaffar — The Repeatedly Forgiving", ur:"بار بار معاف کرنے والا"},
+  {ar:"الْقَهَّارُ", en:"Al-Qahhar — The Subduer", ur:"سب پر غالب"},
+  {ar:"الْوَهَّابُ", en:"Al-Wahhab — The Bestower", ur:"بہت عطا کرنے والا"},
+  {ar:"الرَّزَّاقُ", en:"Ar-Razzaq — The Provider", ur:"رزق دینے والا"},
+  {ar:"الْفَتَّاحُ", en:"Al-Fattah — The Opener", ur:"فیصلہ کرنے والا"},
+  {ar:"الْعَلِيمُ", en:"Al-'Alim — The Knower of All", ur:"سب کچھ جاننے والا"},
+  {ar:"الْقَابِضُ", en:"Al-Qabid — The Withholder", ur:"تنگی دینے والا"},
+  {ar:"الْبَاسِطُ", en:"Al-Basit — The Extender", ur:"وسعت دینے والا"},
+  {ar:"الْخَافِضُ", en:"Al-Khafid — The Reducer", ur:"پست کرنے والا"},
+  {ar:"الرَّافِعُ", en:"Ar-Rafi' — The Exalter", ur:"بلند کرنے والا"},
+  {ar:"الْمُعِزُّ", en:"Al-Mu'izz — The Bestower of Honor", ur:"عزت دینے والا"},
+  {ar:"الْمُذِلُّ", en:"Al-Mudhill — The Humiliator", ur:"ذلت دینے والا"},
+  {ar:"السَّمِيعُ", en:"As-Sami' — The All-Hearing", ur:"سب کچھ سننے والا"},
+  {ar:"الْبَصِيرُ", en:"Al-Basir — The All-Seeing", ur:"سب کچھ دیکھنے والا"},
+  {ar:"الْحَكَمُ", en:"Al-Hakam — The Judge", ur:"فیصلہ کرنے والا"},
+  {ar:"الْعَدْلُ", en:"Al-'Adl — The Utterly Just", ur:"عدل کرنے والا"},
+  {ar:"اللَّطِيفُ", en:"Al-Latif — The Subtly Kind", ur:"باریک بین"},
+  {ar:"الْخَبِيرُ", en:"Al-Khabir — The All-Aware", ur:"خبر رکھنے والا"},
+  {ar:"الْحَلِيمُ", en:"Al-Halim — The Forbearing", ur:"بردبار"},
+  {ar:"الْعَظِيمُ", en:"Al-'Azim — The Magnificent", ur:"عظمت والا"},
+  {ar:"الْغَفُورُ", en:"Al-Ghafoor — The Great Forgiver", ur:"بخشنے والا"},
+  {ar:"الشَّكُورُ", en:"Ash-Shakoor — The Grateful", ur:"قدردان"},
+  {ar:"الْعَلِيُّ", en:"Al-'Ali — The Highest", ur:"سب سے بلند"},
+  {ar:"الْكَبِيرُ", en:"Al-Kabir — The Greatest", ur:"سب سے بڑا"},
+  {ar:"الْحَفِيظُ", en:"Al-Hafiz — The Preserver", ur:"حفاظت کرنے والا"},
+  {ar:"الْمُقِيتُ", en:"Al-Muqit — The Sustainer", ur:"روزی پہنچانے والا"},
+  {ar:"الْحَسِيبُ", en:"Al-Hasib — The Reckoner", ur:"حساب لینے والا"},
+  {ar:"الْجَلِيلُ", en:"Al-Jalil — The Majestic", ur:"جلال والا"},
+  {ar:"الْكَرِيمُ", en:"Al-Karim — The Generous", ur:"کرم کرنے والا"},
+  {ar:"الرَّقِيبُ", en:"Ar-Raqib — The Watchful", ur:"نگرانی کرنے والا"},
+  {ar:"الْمُجِيبُ", en:"Al-Mujib — The Responsive", ur:"قبول کرنے والا"},
+  {ar:"الْوَاسِعُ", en:"Al-Wasi' — The All-Encompassing", ur:"وسعت والا"},
+  {ar:"الْحَكِيمُ", en:"Al-Hakim — The Perfectly Wise", ur:"حکمت والا"},
+  {ar:"الْوَدُودُ", en:"Al-Wadud — The Loving One", ur:"محبت کرنے والا"},
+  {ar:"الْمَجِيدُ", en:"Al-Majid — The Glorious", ur:"بزرگی والا"},
+  {ar:"الْبَاعِثُ", en:"Al-Ba'ith — The Resurrector", ur:"دوبارہ زندہ کرنے والا"},
+  {ar:"الشَّهِيدُ", en:"Ash-Shahid — The Witness", ur:"گواہ"},
+  {ar:"الْحَقُّ", en:"Al-Haqq — The Absolute Truth", ur:"سچا"},
+  {ar:"الْوَكِيلُ", en:"Al-Wakil — The Trustee", ur:"کارساز"},
+  {ar:"الْقَوِيُّ", en:"Al-Qawiyy — The Possessor of All Strength", ur:"قوت والا"},
+  {ar:"الْمَتِينُ", en:"Al-Matin — The Firm One", ur:"مضبوط"},
+  {ar:"الْوَلِيُّ", en:"Al-Waliyy — The Protecting Friend", ur:"دوست"},
+  {ar:"الْحَمِيدُ", en:"Al-Hamid — The Praiseworthy", ur:"تعریف کے لائق"},
+  {ar:"الْمُحْصِي", en:"Al-Muhsi — The Accounter", ur:"گننے والا"},
+  {ar:"الْمُبْدِئُ", en:"Al-Mubdi — The Originator", ur:"پہلی بار پیدا کرنے والا"},
+  {ar:"الْمُعِيدُ", en:"Al-Mu'id — The Restorer", ur:"دوبارہ پیدا کرنے والا"},
+  {ar:"الْمُحْيِي", en:"Al-Muhyi — The Giver of Life", ur:"زندگی دینے والا"},
+  {ar:"الْمُمِيتُ", en:"Al-Mumit — The Bringer of Death", ur:"موت دینے والا"},
+  {ar:"الْحَيُّ", en:"Al-Hayy — The Ever-Living", ur:"ہمیشہ زندہ"},
+  {ar:"الْقَيُّومُ", en:"Al-Qayyum — The Self-Existing", ur:"ہمیشہ قائم رہنے والا"},
+  {ar:"الْوَاجِدُ", en:"Al-Wajid — The Perceiver", ur:"پانے والا"},
+  {ar:"الْمَاجِدُ", en:"Al-Majid — The Illustrious", ur:"بزرگی والا"},
+  {ar:"الْوَاحِدُ", en:"Al-Wahid — The Only One", ur:"اکیلا"},
+  {ar:"الْأَحَدُ", en:"Al-Ahad — The One", ur:"ایک"},
+  {ar:"الصَّمَدُ", en:"As-Samad — The Eternal", ur:"بے نیاز"},
+  {ar:"الْقَادِرُ", en:"Al-Qadir — The All-Able", ur:"قدرت والا"},
+  {ar:"الْمُقْتَدِرُ", en:"Al-Muqtadir — The All-Determiner", ur:"غالب قدرت والا"},
+  {ar:"الْمُقَدِّمُ", en:"Al-Muqaddim — The Expediter", ur:"آگے کرنے والا"},
+  {ar:"الْمُؤَخِّرُ", en:"Al-Mu'akhkhir — The Delayer", ur:"پیچھے کرنے والا"},
+  {ar:"الْأَوَّلُ", en:"Al-Awwal — The First", ur:"سب سے پہلا"},
+  {ar:"الْآخِرُ", en:"Al-Akhir — The Last", ur:"سب سے آخر"},
+  {ar:"الظَّاهِرُ", en:"Az-Zahir — The Manifest One", ur:"ظاہر"},
+  {ar:"الْبَاطِنُ", en:"Al-Batin — The Hidden One", ur:"پوشیدہ"},
+  {ar:"الْوَالِي", en:"Al-Waali — The Governor", ur:"حاکم"},
+  {ar:"الْمُتَعَالِي", en:"Al-Muta'ali — The Self Exalted", ur:"بلند و برتر"},
+  {ar:"الْبَرُّ", en:"Al-Barr — The Doer of Good", ur:"بھلائی کرنے والا"},
+  {ar:"التَّوَابُ", en:"At-Tawwab — The Guide to Repentance", ur:"توبہ قبول کرنے والا"},
+  {ar:"الْمُنْتَقِمُ", en:"Al-Muntaqim — The Avenger", ur:"انتقام لینے والا"},
+  {ar:"الْعَفُوُّ", en:"Al-Afuww — The Forgiver", ur:"معاف کرنے والا"},
+  {ar:"الرَّؤُوفُ", en:"Ar-Ra'oof — The Most Kind", ur:"نہایت شفیق"},
+  {ar:"مَالِكُ الْمُلْكِ", en:"Malik-ul-Mulk — Owner of All", ur:"بادشاہت کا مالک"},
+  {ar:"ذُوالْجَلَالِ وَالْإِكْرَامِ", en:"Dhul-Jalali wal-Ikram — Lord of Majesty and Bounty", ur:"جلال و اکرام والا"},
+  {ar:"الْمُقْسِطُ", en:"Al-Muqsit — The Equitable One", ur:"انصاف کرنے والا"},
+  {ar:"الْجَامِعُ", en:"Al-Jami' — The Gatherer", ur:"جمع کرنے والا"},
+  {ar:"الْغَنِيُّ", en:"Al-Ghani — The Rich One", ur:"بے نیاز"},
+  {ar:"الْمُغْنِي", en:"Al-Mughni — The Enricher", ur:"غنی کرنے والا"},
+  {ar:"الْمَانِعُ", en:"Al-Mani' — The Preventer of Harm", ur:"روکنے والا"},
+  {ar:"الضَّارُّ", en:"Ad-Darr — The Distressor (by His will)", ur:"نقصان پہنچانے والا"},
+  {ar:"النَّافِعُ", en:"An-Nafi' — The Benefiter", ur:"نفع دینے والا"},
+  {ar:"النُّورُ", en:"An-Nur — The Light", ur:"نور"},
+  {ar:"الْهَادِي", en:"Al-Hadi — The Guide", ur:"ہدایت دینے والا"},
+  {ar:"الْبَدِيعُ", en:"Al-Badi' — The Originator", ur:"انوکھی چیزیں بنانے والا"},
+  {ar:"الْبَاقِي", en:"Al-Baqi — The Everlasting One", ur:"ہمیشہ باقی رہنے والا"},
+  {ar:"الْوَارِثُ", en:"Al-Warith — The Inheritor of All", ur:"وارث"},
+  {ar:"الرَّشِيدُ", en:"Ar-Rashid — The Righteous Teacher", ur:"راہ دکھانے والا"},
+  {ar:"الصَّبُورُ", en:"As-Sabur — The Timeless", ur:"صبر والا"},
+];
+
+(function renderAsmaOfDay(){
+  const start = new Date(new Date().getFullYear(), 0, 0);
+  const diff = new Date() - start;
+  const dayOfYear = Math.floor(diff / 86400000);
+  const name = ASMA_UL_HUSNA[dayOfYear % ASMA_UL_HUSNA.length];
+  document.getElementById('asmaCard').innerHTML = `
+    <div class="asma-ar">${name.ar}</div>
+    <div class="asma-en">${name.en}</div>
+    <div class="asma-ur">${name.ur}</div>
+  `;
+})();
+
+/* ============================================================
+   QURAN: Surah list + detail
+   ============================================================ */
+const surahGrid = document.getElementById('surahGrid');
+const surahListWrap = document.getElementById('surahListWrap');
+const surahDetailWrap = document.getElementById('surahDetailWrap');
+const surahBanner = document.getElementById('surahBanner');
+const ayahsList = document.getElementById('ayahsList');
+const backToSurahs = document.getElementById('backToSurahs');
+const reciterSelect = document.getElementById('reciterSelect');
+const playSurahBtn = document.getElementById('playSurahBtn');
+
+let surahsCache = null;
+let currentSurahNumber = null;
+let currentAyahAudios = [];
+let currentlyPlayingAyahIdx = null;
+let fullSurahPlaying = false;
+const audioPlayer = new Audio();
+
+function stopAllAudio(){
+  audioPlayer.pause();
+  audioPlayer.src = '';
+  fullSurahPlaying = false;
+  currentlyPlayingAyahIdx = null;
+  playSurahBtn.classList.remove('playing');
+  playSurahBtn.textContent = '▶ پوری سورت سنیں';
+  document.querySelectorAll('.ayah.is-playing').forEach(el=> el.classList.remove('is-playing'));
+  document.querySelectorAll('.ayah-play-btn.playing').forEach(btn=>{
+    btn.classList.remove('playing');
+    btn.textContent = '▶';
+  });
+}
+
+function playAyahAt(idx){
+  if(!currentAyahAudios[idx]) return;
+  stopAllAudio();
+  currentlyPlayingAyahIdx = idx;
+  const ayahEl = document.querySelectorAll('.ayah')[idx];
+  const btnEl = document.querySelectorAll('.ayah-play-btn')[idx];
+  if(ayahEl) ayahEl.classList.add('is-playing');
+  if(btnEl){ btnEl.classList.add('playing'); btnEl.textContent = '❚❚'; }
+  audioPlayer.src = currentAyahAudios[idx];
+  audioPlayer.play();
+}
+
+audioPlayer.addEventListener('ended', ()=>{
+  if(currentlyPlayingAyahIdx !== null){
+    const nextIdx = currentlyPlayingAyahIdx + 1;
+    if(currentAyahAudios[nextIdx]){
+      playAyahAt(nextIdx);
+    } else {
+      stopAllAudio();
+    }
+  } else if(fullSurahPlaying){
+    stopAllAudio();
+  }
+});
+
+playSurahBtn.addEventListener('click', ()=>{
+  if(fullSurahPlaying){
+    stopAllAudio();
+    return;
+  }
+  if(!currentSurahNumber) return;
+  stopAllAudio();
+  fullSurahPlaying = true;
+  playSurahBtn.classList.add('playing');
+  playSurahBtn.textContent = '❚❚ روکیں';
+  const reciter = reciterSelect.value;
+  audioPlayer.src = `https://cdn.islamic.network/quran/audio-surah/128/${reciter}/${currentSurahNumber}.mp3`;
+  audioPlayer.play();
+});
+
+reciterSelect.addEventListener('change', ()=>{
+  stopAllAudio();
+  if(currentSurahNumber) openSurah(currentSurahNumber);
+});
+
+async function loadSurahList(){
+  try{
+    const res = await fetch('https://api.alquran.cloud/v1/surah');
+    const data = await res.json();
+    surahsCache = data.data;
+    renderSurahGrid(surahsCache);
+  }catch(err){
+    surahGrid.innerHTML = `<div class="error-box">Surah list load nahi ho saki. Internet connection check karein aur dobara koshish karein.<br><br>Could not load the surah list — please check your connection and try again.</div>`;
+  }
+}
+
+function renderSurahGrid(list){
+  surahGrid.className = 'surah-grid';
+  surahGrid.innerHTML = list.map(s => `
+    <div class="surah-card" data-num="${s.number}">
+      <div class="surah-num">${s.number}</div>
+      <div class="surah-meta">
+        <div class="surah-en">${s.englishName}</div>
+        <div class="surah-sub">${s.englishNameTranslation} · ${s.numberOfAyahs} ayahs</div>
+      </div>
+      <div class="surah-ar">${s.name}</div>
+    </div>
+  `).join('');
+  surahGrid.querySelectorAll('.surah-card').forEach(card=>{
+    card.addEventListener('click', ()=> openSurah(parseInt(card.dataset.num)));
+  });
+}
+
+async function openSurah(number){
+  surahListWrap.style.display = 'none';
+  surahDetailWrap.style.display = 'block';
+  ayahsList.className = 'loading';
+  ayahsList.innerHTML = 'لوڈ ہو رہا ہے... Loading ayahs…';
+  surahBanner.innerHTML = '';
+  stopAllAudio();
+  currentSurahNumber = number;
+
+  try{
+    const reciter = reciterSelect.value;
+    const [res, indopakRes] = await Promise.all([
+      fetch(`https://api.alquran.cloud/v1/surah/${number}/editions/quran-uthmani,ur.jalandhry,en.sahih,${reciter}`),
+      fetch(`https://cdn.jsdelivr.net/gh/fawazahmed0/quran-api@1/editions/ara-quranindopak/${number}.json`)
+    ]);
+    const data = await res.json();
+    const indopakData = await indopakRes.json();
+    const [arabicEd, urduEd, englishEd, audioEd] = data.data;
+    const indopakAyahs = indopakData.quran;
+    currentAyahAudios = audioEd.ayahs.map(a => a.audio);
+
+    surahBanner.innerHTML = `
+      <div class="surah-banner">
+        <div class="ar">${arabicEd.name}</div>
+        <div class="en">${arabicEd.englishName} — ${arabicEd.englishNameTranslation}</div>
+        <div class="info">${arabicEd.revelationType} &middot; ${arabicEd.numberOfAyahs} Ayahs</div>
+      </div>
+    `;
+
+    const ayahsHtml = arabicEd.ayahs.map((ayah, i) => `
+      <div class="ayah">
+        <span class="ayah-num">${ayah.numberInSurah}</span>
+        <button class="ayah-play-btn" data-idx="${i}" title="سنیں">▶</button>
+        <div class="ayah-ar">${indopakAyahs[i] ? indopakAyahs[i].text : ayah.text}</div>
+        <div class="ayah-ur">${urduEd.ayahs[i].text}</div>
+        <div class="ayah-en">${englishEd.ayahs[i].text}</div>
+      </div>
+    `).join('');
+    ayahsList.className = '';
+    ayahsList.innerHTML = ayahsHtml;
+
+    ayahsList.querySelectorAll('.ayah-play-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const idx = parseInt(btn.dataset.idx);
+        if(currentlyPlayingAyahIdx === idx && !audioPlayer.paused){
+          stopAllAudio();
+        } else {
+          playAyahAt(idx);
+        }
+      });
+    });
+  }catch(err){
+    ayahsList.className = '';
+    ayahsList.innerHTML = `<div class="error-box">Yeh surah load nahi ho saki. Dobara koshish karein.<br><br>Could not load this surah — please try again.</div>`;
+  }
+}
+
+backToSurahs.addEventListener('click', ()=>{
+  stopAllAudio();
+  surahDetailWrap.style.display = 'none';
+  surahListWrap.style.display = 'block';
+});
+
+loadSurahList();
+
+/* ============================================================
+   NAMAZ: Prayer times (Al-Adhan API) — works for any country/city
+   ============================================================ */
+const COUNTRIES = ["Pakistan","Saudi Arabia","United Arab Emirates","India","Bangladesh","United Kingdom",
+"United States","Canada","Turkey","Egypt","Indonesia","Malaysia","Afghanistan","Iran","Iraq","Jordan",
+"Kuwait","Qatar","Bahrain","Oman","Yemen","Morocco","Algeria","Tunisia","Libya","Sudan","Nigeria","Kenya",
+"South Africa","Germany","France","Netherlands","Australia","China","Sri Lanka","Nepal","Somalia",
+"Azerbaijan","Uzbekistan","Kazakhstan","Tajikistan","Kyrgyzstan","Albania","Bosnia and Herzegovina",
+"Singapore","Brunei","Maldives","Palestine","Lebanon","Syria"];
+
+const countrySelect = document.getElementById('countrySelect');
+COUNTRIES.forEach(c=>{
+  const opt = document.createElement('option');
+  opt.value = c; opt.textContent = c;
+  countrySelect.appendChild(opt);
+});
+countrySelect.addEventListener('change', ()=>{
+  if(countrySelect.value) document.getElementById('countryInputManual').value = '';
+});
+
+const PRAYER_LABELS = [
+  {key:'Fajr', en:'Fajr', ur:'فجر'},
+  {key:'Dhuhr', en:'Dhuhr', ur:'ظہر'},
+  {key:'Asr', en:'Asr', ur:'عصر'},
+  {key:'Maghrib', en:'Maghrib', ur:'مغرب'},
+  {key:'Isha', en:'Isha', ur:'عشاء'},
+];
+
+const timingsResult = document.getElementById('timingsResult');
+
+async function fetchTimingsByCity(city, country){
+  timingsResult.innerHTML = `<div class="loading">اوقات معلوم کیے جا رہے ہیں... Fetching prayer times…</div>`;
+  try{
+    const url = `https://api.aladhan.com/v1/timingsByCity?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&method=2`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.code !== 200) throw new Error('bad response');
+    renderTimings(data.data, `${city}, ${country}`);
+  }catch(err){
+    timingsResult.innerHTML = `<div class="error-box">Shehar ya mulk ka naam sahi likhein aur dobara koshish karein.<br><br>Could not find prayer times for that location — please check the spelling and try again.</div>`;
+  }
+}
+
+async function fetchTimingsByCoords(lat, lon){
+  timingsResult.innerHTML = `<div class="loading">اوقات معلوم کیے جا رہے ہیں... Fetching prayer times…</div>`;
+  try{
+    const url = `https://api.aladhan.com/v1/timings?latitude=${lat}&longitude=${lon}&method=2`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if(data.code !== 200) throw new Error('bad response');
+    renderTimings(data.data, `${lat.toFixed(2)}, ${lon.toFixed(2)}`);
+  }catch(err){
+    timingsResult.innerHTML = `<div class="error-box">Location se waqt maloom nahi ho saka. Dobara koshish karein.<br><br>Could not fetch prayer times for your location — please try again.</div>`;
+  }
+}
+
+function renderTimings(data, locationLabel){
+  const t = data.timings;
+  const date = data.date.readable;
+  const hijri = data.date.hijri ? `${data.date.hijri.day} ${data.date.hijri.month.en} ${data.date.hijri.year} AH` : '';
+
+  timingsResult.innerHTML = `
+    <div class="timings-card">
+      <div class="timings-loc">📍 ${locationLabel}</div>
+      <div class="timings-date">${date}${hijri ? ' &middot; ' + hijri : ''}</div>
+      <div class="timings-grid">
+        ${PRAYER_LABELS.map(p => `
+          <div class="timing-item">
+            <div class="p-ur">${p.ur}</div>
+            <div class="p-en">${p.en}</div>
+            <div class="p-time">${t[p.key]}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  updateHomeNextPrayer(t, locationLabel);
+}
+
+function updateHomeNextPrayer(t, locationLabel){
+  const now = new Date();
+  const order = ['Fajr','Dhuhr','Asr','Maghrib','Isha'];
+  const toMinutes = (str)=>{
+    const [h,m] = str.split(':').map(Number);
+    return h*60+m;
+  };
+  const nowMin = now.getHours()*60 + now.getMinutes();
+  let next = order.find(k => toMinutes(t[k]) > nowMin);
+  if(!next) next = order[0];
+  const label = PRAYER_LABELS.find(p=>p.key===next);
+  document.getElementById('homeNextPrayerCard').innerHTML = `
+    <div class="hnp-label">📍 ${locationLabel}</div>
+    <div class="hnp-name">اگلی نماز — Next Prayer</div>
+    <div class="hnp-time">${label.ur} ${t[next]}</div>
+  `;
+}
+
+document.getElementById('getTimingsBtn').addEventListener('click', ()=>{
+  const city = document.getElementById('cityInput').value.trim();
+  const country = (document.getElementById('countryInputManual').value.trim()) || countrySelect.value;
+  if(!city || !country){
+    timingsResult.innerHTML = `<div class="error-box">Meherbani karke shehar aur mulk dono likhein.<br><br>Please enter both a city and a country.</div>`;
+    return;
+  }
+  fetchTimingsByCity(city, country);
+});
+
+document.getElementById('useLocationBtn').addEventListener('click', ()=>{
+  if(!navigator.geolocation){
+    timingsResult.innerHTML = `<div class="error-box">Yeh browser location support nahi karta. Shehar/mulk manually likhein.<br><br>Geolocation isn't supported here — please enter city/country manually.</div>`;
+    return;
+  }
+  timingsResult.innerHTML = `<div class="loading">لوکیشن معلوم کی جا رہی ہے... Getting your location…</div>`;
+  navigator.geolocation.getCurrentPosition(
+    (pos)=> fetchTimingsByCoords(pos.coords.latitude, pos.coords.longitude),
+    (err)=> {
+      timingsResult.innerHTML = `<div class="error-box">Location permission نہیں مل سکی۔ Shehar aur mulk manually likh kar "Get Timings" dabayein.<br><br>Location permission was denied — please enter city/country manually instead.</div>`;
+    }
+  );
+});
+
+/* ============================================================
+   DUAS: static curated list (Arabic + transliteration + Urdu + English)
+   ============================================================ */
+const DUAS = [
+  {
+    en:"Waking Up", ur:"نیند سے بیدار ہونے کی دعا",
+    ar:"الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
+    translit:"Alhamdu lillahil-lazi ahyana ba'da ma amatana wa ilaihin-nushoor",
+    ur_tr:"تمام تعریفیں اللہ کے لیے ہیں جس نے ہمیں مارنے کے بعد زندہ کیا اور اسی کی طرف اٹھ کر جانا ہے۔",
+    en_tr:"All praise is for Allah who gave us life after having taken it from us, and unto Him is the resurrection."
+  },
+  {
+    en:"Before Sleeping", ur:"سونے سے پہلے کی دعا",
+    ar:"اللَّهُمَّ بِاسْمِكَ أَمُوتُ وَأَحْيَا ",
+    translit:"Bismika Allahumma amootu wa ahya",
+    ur_tr:"اے اللہ! تیرے ہی نام کے ساتھ میں مرتا ہوں اور جیتا ہوں۔",
+    en_tr:"In Your name, O Allah, I die and I live."
+  },
+  {
+    en:"Before Eating", ur:"کھانا شروع کرنے کی دعا",
+    ar:"بِسْمِ اللَّهِ",
+    translit:"Bismillah",
+    ur_tr:"اللہ کے نام سے۔ (اگر شروع میں بولنا بھول جائیں تو درمیان میں یہ کہیں: بسم اللہ اس کے شروع میں بھی اور آخر میں بھی — یعنی «اللہ کے نام سے، اس کے شروع میں بھی اور آخر میں بھی»۔)",
+    en_tr:"In the name of Allah. (If you forget to say it at the start, say partway through: 'In the name of Allah, at its beginning and its end.')"
+  },
+  {
+    en:"After Eating", ur:"کھانے کے بعد کی دعا",
+    ar:"الْحَمْدُ لِلَّهِ الَّذِي أَطْعَمَنِي هَذَا وَرَزَقَنِيهِ مِنْ غَيْرِ حَوْلٍ مِنِّي وَلَا قُوَّةٍ",
+    translit:"Alhamdu lillahil-lazi at'amani haza wa razaqanihi min ghayri hawlin minni wa la quwwah",
+    ur_tr:"تمام تعریفیں اللہ کے لیے ہیں جس نے مجھے یہ کھلایا اور بغیر میری کسی طاقت اور قوت کے مجھے یہ رزق دیا۔",
+    en_tr:"All praise is for Allah who fed me this and provided it for me without any power or might from myself."
+  },
+  {
+    en:"Entering the Home", ur:"گھر میں داخل ہونے کی دعا",
+    ar:"بِسْمِ اللَّهِ وَلَجْنَا وَبِسْمِ اللَّهِ خَرَجْنَا وَعَلَى اللَّهِ رَبِّنَا تَوَكَّلْنَا",
+    translit:"Bismillahi walajna wa bismillahi kharajna wa 'alallahi Rabbina tawakkalna",
+    ur_tr:"اللہ کے نام سے ہم داخل ہوئے اور اللہ کے نام سے نکلے، اور اللہ ہی پر جو ہمارا رب ہے بھروسہ کیا۔",
+    en_tr:"In the name of Allah we enter, and in the name of Allah we leave, and upon Allah, our Lord, we place our trust."
+  },
+  {
+    en:"Leaving the Home", ur:"گھر سے نکلنے کی دعا",
+    ar:"بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ",
+    translit:"Bismillahi tawakkaltu 'alallah, wa la hawla wa la quwwata illa billah",
+    ur_tr:"اللہ کے نام سے، میں نے اللہ پر بھروسہ کیا، اور کوئی طاقت اور قوت نہیں مگر اللہ کی مدد سے۔",
+    en_tr:"In the name of Allah, I place my trust in Allah, and there is no power or might except with Allah."
+  },
+  {
+    en:"Entering the Masjid", ur:"مسجد میں داخل ہونے کی دعا",
+    ar:"اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ",
+    translit:"Allahummaf-tah li abwaba rahmatik",
+    ur_tr:"اے اللہ! میرے لیے اپنی رحمت کے دروازے کھول دے۔",
+    en_tr:"O Allah, open the gates of Your mercy for me."
+  },
+  {
+    en:"Leaving the Masjid", ur:"مسجد سے نکلنے کی دعا",
+    ar:"اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ",
+    translit:"Allahumma inni as'aluka min fadlik",
+    ur_tr:"اے اللہ! میں تجھ سے تیرے فضل کا سوال کرتا ہوں۔",
+    en_tr:"O Allah, I ask You from Your bounty."
+  },
+  {
+    en:"Before Travel", ur:"سفر شروع کرنے کی دعا",
+    ar:"سُبْحَانَ الَّذِي سَخَّرَ لَنَا هَذَا وَمَا كُنَّا لَهُ مُقْرِنِينَ وَإِنَّا إِلَى رَبِّنَا لَمُنْقَلِبُونَ",
+    translit:"Subhanal-lazi sakhkhara lana haza wa ma kunna lahu muqrinin, wa inna ila Rabbina lamunqaliboon",
+    ur_tr:"پاک ہے وہ ذات جس نے اس (سواری) کو ہمارے لیے مسخر کیا، ورنہ ہم اسے قابو میں لانے والے نہ تھے، اور بیشک ہم اپنے رب کی طرف لوٹنے والے ہیں۔",
+    en_tr:"Glory to Him who has subjected this to us, and we could never have accomplished this by ourselves. And indeed, to our Lord we will return."
+  },
+  {
+    en:"For Parents", ur:"والدین کے لیے دعا",
+    ar:"رَبِّ ارْحَمْهُمَا كَمَا رَبَّيَانِي صَغِيرًا",
+    translit:"Rabbir-hamhuma kama rabbayani sagheera",
+    ur_tr:"اے میرے رب! ان دونوں پر رحم فرما جیسا کہ انہوں نے بچپن میں میری پرورش کی۔",
+    en_tr:"My Lord, have mercy upon them as they brought me up when I was small."
+  },
+  {
+    en:"For Increase in Knowledge", ur:"علم میں اضافے کی دعا",
+    ar:"رَبِّ زِدْنِي عِلْمًا",
+    translit:"Rabbi zidni 'ilma",
+    ur_tr:"اے میرے رب! میرے علم میں اضافہ فرما۔",
+    en_tr:"My Lord, increase me in knowledge."
+  },
+  {
+    en:"For Ease in Affairs", ur:"کاموں میں آسانی کی دعا",
+    ar:"رَبِّ اشْرَحْ لِي صَدْرِي وَيَسِّرْ لِي أَمْرِي",
+    translit:"Rabbish-rahli sadri wa yassir li amri",
+    ur_tr:"اے میرے رب! میرا سینہ کھول دے اور میرا کام میرے لیے آسان فرما۔",
+    en_tr:"My Lord, expand for me my chest and ease for me my task."
+  },
+  {
+    en:"When it Rains", ur:"بارش کے وقت کی دعا",
+    ar:"اللَّهُمَّ صَيِّبًا نَافِعًا",
+    translit:"Allahumma sayyiban nafi'a",
+    ur_tr:"اے اللہ! (اس بارش کو) نفع بخش بارش بنا دے۔",
+    en_tr:"O Allah, (make it) a beneficial rain."
+  },
+  {
+    en:"When in Distress", ur:"پریشانی کے وقت کی دعا",
+    ar:"لَا إِلَهَ إِلَّا أَنْتَ سُبْحَانَكَ إِنِّي كُنْتُ مِنَ الظَّالِمِينَ",
+    translit:"La ilaha illa Anta subhanaka inni kuntu minaz-zalimeen",
+    ur_tr:"تیرے سوا کوئی معبود نہیں، تو پاک ہے، بیشک میں ہی ظالموں میں سے تھا۔",
+    en_tr:"There is no deity except You; exalted are You. Indeed, I have been of the wrongdoers."
+  },
+  {
+    en:"Seeking Forgiveness (Sayyidul Istighfar)", ur:"سید الاستغفار",
+    ar:"اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ خَلَقْتَنِي وَأَنَا عَبْدُكَ وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ وَأَبُوءُ بِذَنْبِي فَاغْفِرْ لِي فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
+    translit:"Allahumma anta Rabbi la ilaha illa Anta, khalaqtani wa ana 'abduka, wa ana 'ala 'ahdika wa wa'dika mastata'tu, a'udhu bika min sharri ma sana'tu, abu'u laka bini'matika 'alayya, wa abu'u bidhanbi faghfir li, fa innahu la yaghfirudh-dhunuba illa Anta",
+    ur_tr:"اے اللہ! تو میرا رب ہے، تیرے سوا کوئی معبود نہیں، تو نے مجھے پیدا کیا اور میں تیرا بندہ ہوں، اور میں حسبِ استطاعت تیرے عہد اور وعدے پر قائم ہوں، میں اپنے کیے ہوئے کاموں کی برائی سے تیری پناہ مانگتا ہوں، میں تیری ان نعمتوں کا اقرار کرتا ہوں جو مجھ پر ہیں، اور اپنے گناہ کا اقرار کرتا ہوں، پس تو مجھے بخش دے، کیونکہ تیرے سوا کوئی گناہ نہیں بخشتا۔",
+    en_tr:"O Allah, You are my Lord, none has the right to be worshipped except You. You created me and I am Your servant, and I abide by Your covenant and promise as best I can. I seek refuge in You from the evil of what I have done. I acknowledge Your favor upon me, and I acknowledge my sin, so forgive me, for none forgives sins except You."
+  },
+];
+
+const duasList = document.getElementById('duasList');
+duasList.innerHTML = DUAS.map((d, i) => `
+  <div class="dua-card" data-idx="${i}">
+    <div class="dua-head">
+      <div class="dua-titles">
+        <div class="en">${d.en}</div>
+        <div class="ur">${d.ur}</div>
+      </div>
+      <div class="dua-chevron">▾</div>
+    </div>
+    <div class="dua-body">
+      <div class="dua-ar">${d.ar}</div>
+      <div class="dua-translit">${d.translit}</div>
+      <div class="dua-ur-tr">${d.ur_tr}</div>
+      <div class="dua-en-tr">${d.en_tr}</div>
+    </div>
+  </div>
+`).join('');
+
+duasList.querySelectorAll('.dua-card').forEach(card=>{
+  card.querySelector('.dua-head').addEventListener('click', ()=>{
+    card.classList.toggle('open');
+  });
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
